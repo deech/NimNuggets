@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: pointer-let
+# key: <let
+# condition: (string-equal "stringarray.nim" (buffer-name (current-buffer)))
+# --
+
+let
+  num = 10
+  objs = makeOs(num)

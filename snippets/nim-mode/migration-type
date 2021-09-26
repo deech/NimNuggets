@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: migration-type
+# key: <type1
+# condition: (string-equal "migration.nim" (buffer-name (current-buffer)))
+# --
+import ./backup/migrationmacros
+
+type
+  Person = object
+    firstName: string
+    lastName: string
+  PersonV1 = object
+    firstName: string
+    middleName: string
+    lastName: string
+    address: string

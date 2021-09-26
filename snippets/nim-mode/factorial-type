@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: factorial-type
+# key: <type
+# condition: (string-equal "factorial.nim" (buffer-name (current-buffer)))
+# --
+
+type
+  Factorial[N : static[int]]{.importcpp: "Factorial<\'0>".} = object

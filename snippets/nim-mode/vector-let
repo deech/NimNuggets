@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: vector-let
+# key: <let
+# condition: (string-equal "cppvector.nim" (buffer-name (current-buffer)))
+# --
+
+let
+  num = 10
+  v = makeVector(10)

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: migration-person-migrate
+# key: <migrate
+# condition: (string-equal "migration.nim" (buffer-name (current-buffer)))
+# --
+
+let personMigrate : diffType(Person,PersonV1) =
+  (middleName: "Danger", address: "An address")

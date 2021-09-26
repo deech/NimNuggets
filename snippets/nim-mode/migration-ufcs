@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: migration-ufcs
+# key: <ufcs
+# condition: (string-equal "migration.nim" (buffer-name (current-buffer)))
+# --
+echo p.migrate(PersonV1,personMigrate).migrate(PersonV2,person2Migrate)

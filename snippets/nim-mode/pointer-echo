@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: pointer-echo
+# key: <echo
+# condition: (string-equal "stringarray.nim" (buffer-name (current-buffer)))
+# --
+
+for i in 0..<num:
+  echo objs[i].s
+  dealloc objs[i].s

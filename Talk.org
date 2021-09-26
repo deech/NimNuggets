@@ -1,0 +1,306 @@
+#+OPTIONS: num:nil toc:nil timestamp:nil
+#+REVEAL_TITLE_SLIDE_TIMING: nil
+#+REVEAL_THEME: serif
+#+REVEAL_TRANS: none
+#+REVEAL_EXTRA_CSS: ./leftalign.css
+#+Title: Nim Nuggets
+#+Author: Aditya Siram (@deech)
+#+Email: "@deech"
+# xrandr --output HDMI-2 --same-as eDP-1
+# (setq yas-snippet-dirs (cons "~/Nim/NimNuggets/snippets" '(+snippets-dir doom-snippets-dir +file-templates-dir)))
+
+* What?
+- A typed imperative language
+  - Inspired by Python, Ada and Lisp
+  - Compiles to C/C++/JS
+- Nice macros
+- World Class Static Introspection
+- Minimal Runtime
+  - Static Resource Management
+    - Compile Time RAII
+- World Class Interop With C/C++
+  - Yes, C++!!!
+* Why?
+- Approachable
+  - Looks Familiar™ (Python)
+  - Compiler + Std Lib (from C sources in ~4 mins)
+  - Incremental Builds (~10 secs)
+  - Package Manager (~2 mins)
+  - Tools (~3 mins)
+* Why?
+- Static Introspection
+  - What fields does this record have?
+  - What are their types?
+  - What is the type of an arbitrary expression?
+* Why?
+- Interop
+  - Key to adoption (TypeScript, Scala, F#)
+  - Specifically C++!!
+    - Qt, TensorFlow
+  - Many shops are stuck with C++
+  - 0 overhead bindings to template heavy APIs
+* Demos
+- A couple of demos to show how easy it is to get started ...
+* Server Demo
+- A simple webserver that capitalizes
+#+begin_src bash
+> curl localhost:8000/hello
+HELLO
+#+end_src
+* Manual Memory Management Demo
+- Allocate and free a bunch of strings
+* Approachable
+- You can do it!
+  - Lot of power but familiar
+  - Naive code is about 2x slower than C
+  - Compiles to a small statically linked binary
+- An extensive and diverse standard library
+  - Similar in feel
+  - Mostly simple imperative code
+- Onto The Fun Stuff!
+* UFCS
+- "Uniform Function Call Syntax"
+#+begin_src nim
+proc f(arg1, arg2, arg3 ...) =
+#+end_src
+- normal
+#+begin_src nim
+f(arg1,arg2,arg3)
+#+end_src
+- UFCS
+#+begin_src nim
+arg1.f(arg2,arg3)
+#+end_src
+* UFCS
+- We saw this already
+#+begin_src nim
+r.url.path.splitFile.name.toUpperAscii
+#+end_src
+  - ~splitFile~, ~toUpperAscii~ are just functions
+* UFCS
+- Just plain old functions!
+- No "attaching" a function to an object
+  - +VTables+
+  - +Typeclasses+
+* UFCS
+- Dot Driven Development!
+  - "Data Exploration Through Dot Driven Development"
+  - Tomas Petricek (University Of Kent)
+  - https://kar.kent.ac.uk/67139/1/paper.pdf
+- Your IDE can help you explore
+  - No additional language features!
+* Static Introspection
+- Most of Nim available at compile time!
+#+begin_src nim
+static:
+  echo "hello world"
+#+end_src
+#+begin_src bash
+> nim c ...
+"hello world"
+#+end_src
+- Most of the standard library is available
+#+begin_src nim
+static:
+  echo @["hello", "world"].map(toUpperAscii)
+#+end_src
+#+begin_src bash
+> nim c ...
+@["HELLO", "WORLD"]
+#+end_src
+* Static Introspection
+- Ask whether an arbitrary expression compiles /at/ /compile/ /time/
+#+begin_src nim
+static:
+  echo compiles(1 + 1.0)
+  echo compiles(1 + "hello world")
+#+end_src
+#+begin_src nim
+> nim c ..
+true
+false
+#+end_src
+* Static Introspection
+- All static introspection works in the current type environment
+  - ~tuple~ is just an anonymous record
+  - not like tuples in other langs!
+#+begin_src nim
+type
+  O = tuple[i:int, s:string]
+static:
+  let o:O = (i:1,s:"blah")
+  echo compiles(o.s.toUpperAscii)
+#+end_src
+#+begin_src nim
+> nim c ..
+true
+#+end_src
+* [#B] Static Introspection
+- Get the type directly
+#+begin_src nim
+static:
+  echo typeof(1 + 1.0)
+#+end_src
+#+begin_src bash
+> nim c ..
+float
+#+end_src
+- Types as values!
+#+begin_src nim
+proc f(i:int) =
+  let x : typeof(i) = i + 1
+  echo f
+#+end_src
+* Static Introspection
+- Types are calculated not extracted!
+  - the ~[T]~ here is a generic
+#+begin_src nim
+static:
+  echo typeof(
+    block:
+      proc identity[T](t:T):T = t
+      identity(toUpperAscii("blah"))
+  )
+#+end_src
+#+begin_src bash
+> nim c ...
+string
+#+end_src
+* Static Introspection
+- So what do we do with all this ...
+* Fizzbuzz
+#+begin_src nim
+proc fizzbuzz():seq[string] =
+  for i in 1..100:
+    let
+      fizz = i mod 3 == 0
+      buzz = i mod 5 == 0
+    result.add(
+      if fizz and buzz: "fizzbuzz"
+      elif fizz: "fizz"
+      elif buzz: "buzz"
+      else: $i
+    )
+#+end_src
+
+* Fizzbuzz
+#+begin_src nim
+proc fizzbuzz():seq[string] 🎉 {.compileTime.} 🎉=
+  for i in 1..100:             ️☝️☝️☝️☝️☝️☝️☝️☝️☝️
+    let                     
+      fizz = i mod 3 == 0  
+      buzz = i mod 5 == 0 
+    result.add(          
+      if fizz and buzz: "fizzbuzz"
+      elif fizz: "fizz"
+      elif buzz: "buzz"
+      else: $i
+    )
+#+end_src
+* Type Migration
+- You start here ...
+#+begin_src nim
+type
+  Person = object
+    firstName: string
+    lastName: string
+    age: int
+#+end_src
+* Type Migration
+- Time passes ...
+#+begin_src nim
+type
+  Person = object
+    ...
+    middleName:string
+    address:string
+#+end_src
+* Type Migration
+- And today ...
+#+begin_src nim
+type
+  Address = object
+    street: string
+    city: string
+    ...
+  Person = object
+    ...
+    age: Natural
+    address: Address
+#+end_src
+* Type Migration
+- What is the migration story from here ...
+#+begin_src nim
+type
+  Person = object
+    ...
+#+end_src
+- to here ...
+#+begin_src nim
+type
+  Person = object
+    ...
+    middleName:string
+    address:string
+#+end_src
+* Type Migration
+- to here ..
+#+begin_src nim
+type
+  Person = object
+    ...
+    age: Natural
+    address: Address
+#+end_src
+* Type Migration
+- Embrace The Boilerplate!
+  - Keep Copies Of The Old Types
+  - Manually write migrations
+  - Unsustainable & false simplicity
+* Type Migration
+- Expert level solutions for simple problems
+  - Safe But Complicated
+* Type Migration
+* Type Migration
+- Serialization/Deserialization is 1/2 the story
+- Static Introspection
+  - print, take apart, reassemble metadata
+  - critical for controlling cognitive & codebase complexity
+  - it's fun :)
+
+* Static Resource Management
+- Array's of Strings Redux
+* Static Resource Management
+- Nim statically & injects destructors after last use.
+- Like RAII but completely unobtrusive
+- Just forget it exists!
+* Static Resource Management
+- Nim has (basic) linear types!
+- Also illustrate some key philosophies in design
+* Static Resource Management
+- Get out of the user's way
+- Show, don't tell
+  - More powerful than error messages!
+  - Can spot bugs!
+* Static Resource Management
+- So we have to disable copying
+* Static Resource Management
+- It works well
+  - The standard library and most packages have moved to it
+- Relax and do the easy thing
+  - Profile & optimize when necessary
+* C++ Interop
+- Show how to reuse the Standard Template Library
+- Add a bunch of ~std::string~ to an ~std::vector~
+* C++ Interop
+- Factorial example ( if time permits )
+* C++ Interop
+- Any C++ library is now accessible
+  - The ecosystem just got waaay bigger!
+- Trying out Nim is low risk!
+* Wrap Up
+- Fast Compiler!
+- Static Introspection
+- Static Memory Management With Minimal Hassle
+- C++ interop
+- Thanks for coming!

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: factorial-echo
+# key: <echo
+# condition: (string-equal "factorial.nim" (buffer-name (current-buffer)))
+# --
+
+echo Factorial[$0].value

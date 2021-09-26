@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: pointer-dealloc
+# key: <dealloc
+# condition: (string-equal "stringarray.nim" (buffer-name (current-buffer)))
+# --
+
+dealloc objs

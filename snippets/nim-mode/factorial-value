@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: factorial-value
+# key: <value
+# condition: (string-equal "factorial.nim" (buffer-name (current-buffer)))
+# --
+
+proc value(_:typedesc[Factorial]):cint {.importcpp: "'1::value@".}

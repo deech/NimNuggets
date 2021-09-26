@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: server-start
+# uuid: server-start
+# key: <start
+# condition: (string-equal "server.nim" (buffer-name (current-buffer)))
+# --
+waitFor newAsyncHttpServer().serve(Port($0), handle)

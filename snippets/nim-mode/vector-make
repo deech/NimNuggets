@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: vector-make
+# key: <make
+# condition: (string-equal "cppvector.nim" (buffer-name (current-buffer)))
+# --
+
+proc makeVector(num:int):StdVector[StdUniquePtr[StdString]] =
+  result = makeSVector[StdUniquePtr[StdString]]()
+  for i in 0..<num:
+    var s = cstring("string at index " & $i)
+    result.add(makeUPtr(makeSString(s)))

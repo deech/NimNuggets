@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: simple-destruction-destroy
+# key: <destroy
+# expand-env: ((yas-indent-line 'fixed))
+# condition: (string-equal "simpledestruction.nim" (buffer-name (current-buffer)))
+# --
+proc \`=destroy\`(o: var O) =
+  if (o.ss.len != 0):
+    echo "destroying!"
+  \`=destroy\`(o.ss)

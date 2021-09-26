@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: migration-difftype
+# key: <difftype
+# condition: (string-equal "migration.nim" (buffer-name (current-buffer)))
+# --
+
+static:
+  echo diffType(Person,PersonV1)

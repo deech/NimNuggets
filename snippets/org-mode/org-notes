@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: org-notes
+# uuid: org-notes
+# key: note
+# condition: t
+# --
+#+begin_notes
+$0
+#+end_notes

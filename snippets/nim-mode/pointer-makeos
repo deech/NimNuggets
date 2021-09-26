@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: pointer-makeos
+# key: <makeos
+# condition: (string-equal "stringarray.nim" (buffer-name (current-buffer)))
+# --
+proc makeOs(num: int): ptr UncheckedArray[O] =
+  result = cast[ptr UncheckedArray[O]](alloc(num * sizeof(O)))
+  $0

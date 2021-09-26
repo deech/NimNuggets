@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: simple-destruction-type
+# key: <type
+# condition: (string-equal "simpledestruction.nim" (buffer-name (current-buffer)))
+# --
+import os, strutils
+
+type
+  O = object
+    ss: seq[string]

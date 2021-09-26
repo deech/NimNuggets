@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: vector-uops
+# key: <uops
+# condition: (string-equal "cppvector.nim" (buffer-name (current-buffer)))
+# --
+
+proc makeUPtr[T](t:T):StdUniquePtr[T] {.importcpp: "std::make_unique<'*0>(@)", header: "<memory>".}
+proc getInner[T](p:StdUniquePtr[T]):T {.importcpp: "(* #)", header:"<memory>".}

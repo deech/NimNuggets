@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: pointer-copymem
+# key: <copymem
+# condition: (string-equal "stringarray.nim" (buffer-name (current-buffer)))
+# --
+copyMem(unsafeAddr sc[0], unsafeAddr s[0], s.len+1)
+result[i] = O(s: sc)

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: vector-vops
+# key: <vops
+# condition: (string-equal "cppvector.nim" (buffer-name (current-buffer)))
+# --
+
+proc makeSVector[T](): StdVector[T] {.importcpp: "std::vector<'*0>()", header: "<vector>".}
+proc add[T](v:StdVector[T],t:T) {.importcpp: "#.emplace_back(@)", header: "<vector>".}
+proc getIndex[T](v:StdVector[T],idx:cint):T {.importcpp:"#[#]", header: "<vector>".}

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: pointer-for
+# key: <for
+# condition: (string-equal "stringarray.nim" (buffer-name (current-buffer)))
+# --
+for i in 0..<num:
+  let
+    s = "a string at index " & $i
+    sc = cast[cstring](alloc(s.len+1))
+  $0

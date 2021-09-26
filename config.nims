@@ -1,0 +1,5 @@
+switch("w", "off")
+switch("gc", "orc")
+switch("hints", "off")
+switch("d", "useMalloc")
+switch("forceBuild")

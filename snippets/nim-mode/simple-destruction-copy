@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: simple-destruction-copy
+# key: <copy
+# expand-env: ((yas-indent-line 'fixed))
+# condition: (string-equal "simpledestruction.nim" (buffer-name (current-buffer)))
+# --
+proc \`=copy\`(dest: var O, src:O) {.error: "No copying allowed".}

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: vector-for
+# key: <for
+# condition: (string-equal "cppvector.nim" (buffer-name (current-buffer)))
+# --
+
+for i in 0..<num:
+  echo v.getIndex(i.cint).getInner.getString

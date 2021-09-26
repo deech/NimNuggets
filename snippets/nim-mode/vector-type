@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: vector-type
+# key: <type
+# condition: (string-equal "cppvector.nim" (buffer-name (current-buffer)))
+# expand-env: ((yas-indent-line 'fixed))
+# --
+type
+  StdVector[T]{.importcpp: "std::vector<'0>", header:"<vector>".} = object
+  StdUniquePtr[T]{.importcpp: "std::unique_ptr<'0>", header: "<memory>".} = object
+  StdString{.importcpp: "std::string", header: "<string>".} = object

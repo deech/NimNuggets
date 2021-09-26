@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: migration-type2
+# key: <type2
+# condition: (string-equal "migration.nim" (buffer-name (current-buffer)))
+# --
+
+type
+  Address = object
+    street: string
+    city: string
+    zip: string
+  PersonV2 = object
+    firstName: string
+    middleName: string
+    lastName: string
+    address: Address

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: migration-person
+# key: <person1
+# condition: (string-equal "migration.nim" (buffer-name (current-buffer)))
+# --
+
+let p = Person(firstName: "Namey", lastName: "McNameface")

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: simple-destruction-print
+# key: <print
+# condition: (string-equal "simpledestruction.nim" (buffer-name (current-buffer)))
+# --
+
+proc print(num:int) =
+  let o = makeO(num)
+  for i in 0..<o.ss.len:
+    echo o.ss[i]

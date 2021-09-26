@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: simple-destruction-makeO
+# key: <make
+# condition: (string-equal "simpledestruction.nim" (buffer-name (current-buffer)))
+# expand-env: ((yas-indent-line 'fixed))
+# --
+
+proc makeO(num:int):O =
+  var ss : seq[string]
+  for i in 0..<num:
+    ss.add("a string at index " & $i)
+  result = O(ss:ss)

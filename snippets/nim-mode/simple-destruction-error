@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: simple-destruction-error
+# key: <error
+# expand-env: ((yas-indent-line 'fixed))
+# condition: (string-equal "simpledestruction.nim" (buffer-name (current-buffer)))
+# --
+
+# Error: '=copy' is not available for type <O>;
+# requires a copy because it's not the last read
+# of 'o';
+# another read is done here:
+# /home/deech/Nim/NimNuggets/simpledestruction.nim(36, 9); routine: main

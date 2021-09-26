@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: server-imports
+# uuid: server-import
+# key: <import
+# condition: (string-equal "server.nim" (buffer-name (current-buffer)))
+# --
+
+import std/[asynchttpserver, asyncfutures, asyncdispatch, json, uri, os, strutils]

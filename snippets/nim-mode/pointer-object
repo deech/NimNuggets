@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: pointer-object
+# key: <object
+# condition: (string-equal "stringarray.nim" (buffer-name (current-buffer)))
+# --
+type
+  O = object
+    s:cstring

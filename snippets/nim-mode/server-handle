@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: server-handle
+# uuid: server-handle
+# key: <handle
+# condition: (string-equal "server.nim" (buffer-name (current-buffer)))
+# --
+proc handle(r:Request):Future[void] =
+  let msg = _
+  r.respond(Http200, $msg & "\n")

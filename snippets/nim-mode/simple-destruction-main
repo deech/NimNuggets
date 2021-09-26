@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: simple-destruction-main
+# key: <main
+# condition: (string-equal "simpledestruction.nim" (buffer-name (current-buffer)))
+# --
+proc main() =
+  echo "before"
+  print(paramStr(1).parseInt)
+  echo "after"
+
+main()

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: simple-destruction-print-sink
+# key: <sink
+# condition: (string-equal "simpledestruction.nim" (buffer-name (current-buffer)))
+# expand-env: ((yas-indent-line 'fixed))
+# --
+
+proc printSink(o: sink O) =
+  for i in 0..<o.ss.len:
+    echo o.ss[i]

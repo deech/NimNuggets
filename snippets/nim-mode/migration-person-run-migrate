@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: migration-person-run-migrate
+# key: <run-migrate
+# condition: (string-equal "migration.nim" (buffer-name (current-buffer)))
+# --
+
+let person1 = migrate(p,PersonV1,personMigrate)
+echo person1

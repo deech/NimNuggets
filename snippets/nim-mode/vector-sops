@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: vector-sops
+# key: <sops
+# condition: (string-equal "cppvector.nim" (buffer-name (current-buffer)))
+# --
+
+proc makeSString(c:cstring):StdString {.importcpp:"std::string(@)", header: "<string>".}
+proc getString(a: StdString): cstring {.importcpp: "(char *)(#.c_str())", header: "<string>".}

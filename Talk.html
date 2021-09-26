@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Nim Nuggets</title>
+<meta name="author" content="Aditya Siram (@deech)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="/home/deech/doom-emacs/.local/straight/build-28.0.50/revealjs/dist/reveal.css"/>
+
+<link rel="stylesheet" href="/home/deech/doom-emacs/.local/straight/build-28.0.50/revealjs/dist/theme/serif.css" id="theme"/>
+
+<link rel="stylesheet" href="./leftalign.css"/>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide" data-timing="nil">
+<h1 class="title">Nim Nuggets</h1><h2 class="author">Aditya Siram (@deech)</h2>
+</section>
+
+<section>
+<section id="slide-org3bf6126">
+<h2 id="org3bf6126">What?</h2>
+<ul>
+<li>A typed imperative language
+<ul>
+<li>Inspired by Python, Ada and Lisp</li>
+<li>Compiles to C/C++/JS</li>
+
+</ul></li>
+<li>Nice macros</li>
+<li>World Class Static Introspection</li>
+<li>Minimal Runtime
+<ul>
+<li>Static Resource Management
+<ul>
+<li>Compile Time RAII</li>
+
+</ul></li>
+
+</ul></li>
+<li>World Class Interop With C/C++
+<ul>
+<li>Yes, C++!!!</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgd1d31ab">
+<h2 id="orgd1d31ab">Why?</h2>
+<aside class="notes">
+<p>
+Looks familiar enough that I&rsquo;m just going to present a bunch of code and hoping you all just pick it up
+</p>
+
+<p>
+But more importantly build times are v fast
+</p>
+
+<p>
+When a compiler, standard library &amp; package manager build from C in under 7 minutes that changes the game.
+</p>
+
+<p>
+I can stick a debug statement deep in the compiler and see it about 10 seconds later in app code &#x2026;
+</p>
+
+<p>
+An app (NimLSP) that uses the compiler as a library builds in a minute &#x2026;
+</p>
+
+</aside>
+<ul>
+<li>Approachable
+<ul>
+<li>Looks Familiar™ (Python)</li>
+<li>Compiler + Std Lib (from C sources in ~4 mins)</li>
+<li>Incremental Builds (~10 secs)</li>
+<li>Package Manager (~2 mins)</li>
+<li>Tools (~3 mins)</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org49156eb">
+<h2 id="org49156eb">Why?</h2>
+<aside class="notes">
+<p>
+Being able to treat your compile time environment as queryable metadata is a super power!
+</p>
+
+<p>
+In most languages types and other metatdata are locked in and impossible to access programatically
+</p>
+
+<p>
+We&rsquo;ll see some examples in a minute
+</p>
+
+</aside>
+<ul>
+<li>Static Introspection
+<ul>
+<li>What fields does this record have?</li>
+<li>What are their types?</li>
+<li>What is the type of an arbitrary expression?</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgf8e7e20">
+<h2 id="orgf8e7e20">Why?</h2>
+<aside class="notes">
+<p>
+Interop is key to adoption (TypeScript, Scala, F# &#x2026;)
+</p>
+
+<p>
+There&rsquo;s a ton of useful, important and critical software written in C++ that most languages can&rsquo;t access without a huge amount of effort, Qt, TensorFlow.
+</p>
+
+<p>
+A language that use that stuff is ahead of the curve.
+</p>
+
+<p>
+There&rsquo;s a ton of shops that can&rsquo;t use a language because it can&rsquo;t talk to their existing C++ codebase.
+</p>
+
+<p>
+Imagine being able to provide a 0 overhead binding to template heavy C++ in a couple lines
+</p>
+
+<p>
+Examples of that are coming up
+</p>
+
+</aside>
+<ul>
+<li>Interop
+<ul>
+<li>Key to adoption (TypeScript, Scala, F#)</li>
+<li>Specifically C++!!
+<ul>
+<li>Qt, TensorFlow</li>
+
+</ul></li>
+<li>Many shops are stuck with C++</li>
+<li>0 overhead bindings to template heavy APIs</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org2d0f562">
+<h2 id="org2d0f562">Demos</h2>
+<ul>
+<li>A couple of demos to show how easy it is to get started &#x2026;</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgd13f405">
+<h2 id="orgd13f405">Server Demo</h2>
+<aside class="notes">
+<p>
+First going to build a simple webserver that capitalizes it&rsquo;s path
+</p>
+
+<p>
+&lt;imports grab a bunch of imports from the standard library
+</p>
+
+<p>
+&lt;handle make up a request handler
+</p>
+
+<p>
+%* { &ldquo;result&rdquo; : r.url.path.splitFile.name.toUpperAscii }
+</p>
+
+<p>
+and then grab url, the base path, split it, get the last time, capitalize
+</p>
+
+<p>
+nothing too surprising
+</p>
+
+<p>
+&lt;start then we start the server on port 8000
+</p>
+
+<p>
+(switch to terminal)
+</p>
+
+<p>
+curl localhost:8000/strangeloop
+</p>
+
+<p>
+&#x2026; and thrill at the JSON response
+</p>
+
+<p>
+I hope you&rsquo;ll agree this code looks a lot like languages you&rsquo;ve seen before &#x2026;
+</p>
+
+<p>
+Now way on the other end &#x2026;
+</p>
+
+<p>
+we want to work with memory manually pointers and the like
+</p>
+
+</aside>
+<ul>
+<li>A simple webserver that capitalizes</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-bash">&gt; <span style="color: #005a5f;">curl</span> localhost:8000/hello
+HELLO
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org4d0876e">
+<h2 id="org4d0876e">Manual Memory Management Demo</h2>
+<aside class="notes">
+<p>
+here we&rsquo;re creating and printing an array of c strings
+</p>
+
+<p>
+&lt;object first we create an object that holds a c style string, it&rsquo;s just a char*
+</p>
+
+<p>
+&lt;makeos then a function that build up an array of some number of those objects
+</p>
+
+<p>
+first we allocate memory to hold them
+</p>
+
+<p>
+&lt;for then loop through allocate memory for each string
+</p>
+
+<p>
+&lt;copymem move that string onto the heap
+</p>
+
+<p>
+&lt;let then create an array of 10 strings
+</p>
+
+<p>
+&lt;echo then print them out deallocating as we go
+</p>
+
+<p>
+&lt;dealloc then deallocate the array itself
+</p>
+
+<p>
+why? an object in Nim has slight overhead we can also just use plain c-style structs
+</p>
+
+<p>
+underneath the hood it&rsquo;s just malloc &amp; free
+</p>
+
+<p>
+(switch to terminal)
+</p>
+
+<p>
+./stringarray
+</p>
+
+<p>
+and we can show that it&rsquo;s valgrind clean
+</p>
+
+<p>
+valgrind ./stringarray
+</p>
+
+<p>
+Nim has much better ways of managing memory but if you need it it&rsquo;s there &#x2026;
+</p>
+
+</aside>
+<ul>
+<li>Allocate and free a bunch of strings</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org3466471">
+<h2 id="org3466471">Approachable</h2>
+<aside class="notes">
+<p>
+I hope to show that you can learn Nim!
+</p>
+
+<p>
+the language has a lot of power and I&rsquo;ll get into that in a sec
+</p>
+
+<p>
+but for the most part you don&rsquo;t have &ldquo;change the way you think about programming&rdquo; to stuff a JSON blob in a web response
+</p>
+
+<p>
+without thinking about it you can write code that performs about twice as slow as C
+</p>
+
+<p>
+and that&rsquo;s pretty good for most purposes
+</p>
+
+<p>
+most Nim code including the stuff in the standard library and the wild looks like this
+</p>
+
+</aside>
+<ul>
+<li>You can do it!
+<ul>
+<li>Lot of power but familiar</li>
+<li>Naive code is about 2x slower than C</li>
+<li>Compiles to a small statically linked binary</li>
+
+</ul></li>
+<li>An extensive and diverse standard library
+<ul>
+<li>Similar in feel</li>
+<li>Mostly simple imperative code</li>
+
+</ul></li>
+<li>Onto The Fun Stuff!</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org98fc294">
+<h2 id="org98fc294">UFCS</h2>
+<aside class="notes">
+<p>
+before we do I wanted to call out a small syntactic feature that makes a lot of difference
+</p>
+
+<p>
+it&rsquo;s called Uniform Function Call syntax and what it does is very simple
+</p>
+
+</aside>
+<ul>
+<li>&ldquo;Uniform Function Call Syntax&rdquo;</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">proc</span> <span style="color: #721045;">f</span>(arg1, arg2, arg3 ...) =
+</pre>
+</div>
+<ul>
+<li>normal</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim">f(arg1,arg2,arg3)
+</pre>
+</div>
+<ul>
+<li>UFCS</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim">arg1.f(arg2,arg3)
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org598c1df">
+<h2 id="org598c1df">UFCS</h2>
+<ul>
+<li>We saw this already</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim">r.url.path.splitFile.name.toUpperAscii
+</pre>
+</div>
+<ul>
+<li><code>splitFile</code>, <code>toUpperAscii</code> are just functions</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgfddc8a4">
+<h2 id="orgfddc8a4">UFCS</h2>
+<ul>
+<li>Just plain old functions!</li>
+<li>No &ldquo;attaching&rdquo; a function to an object
+<ul>
+<li><del>VTables</del></li>
+<li><del>Typeclasses</del></li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgb5488e7">
+<h2 id="orgb5488e7">UFCS</h2>
+<ul>
+<li>Dot Driven Development!
+<ul>
+<li>&ldquo;Data Exploration Through Dot Driven Development&rdquo;</li>
+<li>Tomas Petricek (University Of Kent)</li>
+<li><a href="https://kar.kent.ac.uk/67139/1/paper.pdf">https://kar.kent.ac.uk/67139/1/paper.pdf</a></li>
+
+</ul></li>
+<li>Your IDE can help you explore
+<ul>
+<li>No additional language features!</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orge575536">
+<h2 id="orge575536">Static Introspection</h2>
+<aside class="notes">
+<p>
+things inside a static block run at compile time
+</p>
+
+<p>
+some syscalls and ffi are not available but you do pretty much anything else &#x2026;
+</p>
+
+<p>
+It&rsquo;s not magic, the way it works is in addition to compiling to C etc. Nim also has this register based interpreter backend that understands the language
+and compile time constructs are run in that interpreter
+</p>
+
+</aside>
+<ul>
+<li>Most of Nim available at compile time!</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">static</span>:
+  <span style="color: #8f0075;">echo</span> <span style="color: #2544bb;">"hello world"</span>
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre class="src src-bash">&gt; nim c ...
+<span style="color: #2544bb;">"hello world"</span>
+</pre>
+</div>
+<ul>
+<li>Most of the standard library is available</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">static</span>:
+  <span style="color: #8f0075;">echo</span> @[<span style="color: #2544bb;">"hello"</span>, <span style="color: #2544bb;">"world"</span>].map(toUpperAscii)
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre class="src src-bash">&gt; nim c ...
+@<span style="color: #000000;">[</span><span style="color: #2544bb;">"HELLO"</span>, <span style="color: #2544bb;">"WORLD"</span><span style="color: #000000;">]</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org84d204a">
+<h2 id="org84d204a">Static Introspection</h2>
+<ul>
+<li>Ask whether an arbitrary expression compiles <i>at</i> <i>compile</i> <i>time</i></li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">static</span>:
+  <span style="color: #8f0075;">echo</span> <span style="color: #8f0075; font-style: italic;">compiles</span>(<span style="color: #0000c0;">1</span> + <span style="color: #0000c0;">1.0</span>)
+  <span style="color: #8f0075;">echo</span> <span style="color: #8f0075; font-style: italic;">compiles</span>(<span style="color: #0000c0;">1</span> + <span style="color: #2544bb;">"hello world"</span>)
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre class="src src-nim">&gt; nim c ..
+<span style="color: #0000c0;">true</span>
+<span style="color: #0000c0;">false</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org71245f8">
+<h2 id="org71245f8">Static Introspection</h2>
+<aside class="notes">
+<p>
+We instantiate it at compile time and check if some function on a field works
+</p>
+
+</aside>
+<ul>
+<li>All static introspection works in the current type environment
+<ul>
+<li><code>tuple</code> is just an anonymous record</li>
+<li>not like tuples in other langs!</li>
+
+</ul></li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">type</span>
+  <span style="color: #005a5f;">O</span> = <span style="color: #5317ac;">tuple</span>[i:<span style="color: #005a5f;">int</span>, s:<span style="color: #005a5f;">string</span>]
+<span style="color: #5317ac;">static</span>:
+  <span style="color: #5317ac;">let</span> <span style="color: #00538b;">o</span>:<span style="color: #005a5f;">O</span> = (i:<span style="color: #0000c0;">1</span>,s:<span style="color: #2544bb;">"blah"</span>)
+  <span style="color: #8f0075;">echo</span> <span style="color: #8f0075; font-style: italic;">compiles</span>(o.s.toUpperAscii)
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre class="src src-nim">&gt; nim c ..
+<span style="color: #0000c0;">true</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org4435e4a">
+<h2 id="org4435e4a">Static Introspection</h2>
+<aside class="notes">
+<p>
+you can get the type of an arbitrary expression directly
+</p>
+
+<p>
+and use it anywhere you would use a type
+</p>
+
+<p>
+here the let in the function is compile time reflecting on the type of its argument and
+using it as a type
+</p>
+
+<p>
+this is equivalent to just &ldquo;let x : int &#x2026;&rdquo;
+</p>
+
+</aside>
+<ul>
+<li>Get the type directly</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">static</span>:
+  <span style="color: #8f0075;">echo</span> typeof(<span style="color: #0000c0;">1</span> + <span style="color: #0000c0;">1.0</span>)
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre class="src src-bash">&gt; nim c ..
+float
+</pre>
+</div>
+<ul>
+<li>Types as values!</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">proc</span> <span style="color: #721045;">f</span>(i:<span style="color: #005a5f;">int</span>) =
+  <span style="color: #5317ac;">let</span> <span style="color: #00538b;">x </span>: typeof(i) = i + <span style="color: #0000c0;">1</span>
+  <span style="color: #8f0075;">echo</span> f
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org7d8630f">
+<h2 id="org7d8630f">Static Introspection</h2>
+<aside class="notes">
+<p>
+and the type information is calculated,
+</p>
+
+<p>
+it&rsquo;s not doing something cheesy like digging through the ast to extract the type signature
+</p>
+
+<p>
+here we have an identity function at compile time with a calculated string
+</p>
+
+<p>
+that block is just an anonymous scope just like an bare open close curly in other languages
+</p>
+
+</aside>
+<ul>
+<li>Types are calculated not extracted!
+<ul>
+<li>the <code>[T]</code> here is a generic</li>
+
+</ul></li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">static</span>:
+  <span style="color: #8f0075;">echo</span> typeof(
+    <span style="color: #5317ac;">block</span>:
+      <span style="color: #5317ac;">proc</span> <span style="color: #721045;">identity</span>[<span style="color: #005a5f;">T</span>](t:<span style="color: #005a5f;">T</span>):<span style="color: #005a5f;">T</span> = t
+      identity(toUpperAscii(<span style="color: #2544bb;">"blah"</span>))
+  )
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre class="src src-bash">&gt; nim c ...
+string
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org8363637">
+<h2 id="org8363637">Static Introspection</h2>
+<aside class="notes">
+<p>
+so what do we do with all this
+</p>
+
+<p>
+imagine you&rsquo;re at a job interview and they&rsquo;re all like FIZZBUZZ
+</p>
+
+<p>
+and you&rsquo;re like noooo problem
+</p>
+
+</aside>
+<ul>
+<li>So what do we do with all this &#x2026;</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgfa91760">
+<h2 id="orgfa91760">Fizzbuzz</h2>
+<aside class="notes">
+<p>
+and then the interviewer is like &ldquo;can you make it faster&rdquo;
+</p>
+
+</aside>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">proc</span> <span style="color: #721045;">fizzbuzz</span>():<span style="color: #005a5f;">seq</span>[<span style="color: #005a5f;">string</span>] =
+  <span style="color: #5317ac;">for</span> i <span style="color: #5317ac;">in</span> <span style="color: #0000c0;">1</span>..<span style="color: #0000c0;">100</span>:
+    <span style="color: #5317ac;">let</span>
+      fizz = i <span style="color: #8f0075;">mod</span> <span style="color: #0000c0;">3</span> == <span style="color: #0000c0;">0</span>
+      buzz = i <span style="color: #8f0075;">mod</span> <span style="color: #0000c0;">5</span> == <span style="color: #0000c0;">0</span>
+    <span style="color: #00538b;">result</span>.<span style="color: #8f0075;">add</span>(
+      <span style="color: #5317ac;">if</span> fizz <span style="color: #8f0075;">and</span> buzz: <span style="color: #2544bb;">"fizzbuzz"</span>
+      <span style="color: #5317ac;">elif</span> fizz: <span style="color: #2544bb;">"fizz"</span>
+      <span style="color: #5317ac;">elif</span> buzz: <span style="color: #2544bb;">"buzz"</span>
+      <span style="color: #5317ac;">else</span>: $i
+    )
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd74ab0d">
+<h2 id="orgd74ab0d">Fizzbuzz</h2>
+<aside class="notes">
+<p>
+and you&rsquo;re like &ldquo;WHEN DO I START&rdquo;
+</p>
+
+<p>
+for folks that can&rsquo;t see that if you add a compiletime pragma to a function it runs at compile time and caches the result in the binary so lookups are constant
+</p>
+
+<p>
+that was a cheap joke and beneath me &#x2026; almost
+</p>
+
+</aside>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">proc</span> <span style="color: #721045;">fizzbuzz</span>():<span style="color: #005a5f;">seq</span>[<span style="color: #005a5f;">string</span>] &#127881; {.<span style="color: #a0132f;">compileTime</span>.} &#127881;=
+  <span style="color: #5317ac;">for</span> i <span style="color: #5317ac;">in</span> <span style="color: #0000c0;">1</span>..<span style="color: #0000c0;">100</span>:             &#65039;&#9757;&#65039;&#9757;&#65039;&#9757;&#65039;&#9757;&#65039;&#9757;&#65039;&#9757;&#65039;&#9757;&#65039;&#9757;&#65039;&#9757;&#65039;
+    <span style="color: #5317ac;">let</span>                     
+      fizz = i <span style="color: #8f0075;">mod</span> <span style="color: #0000c0;">3</span> == <span style="color: #0000c0;">0</span>  
+      buzz = i <span style="color: #8f0075;">mod</span> <span style="color: #0000c0;">5</span> == <span style="color: #0000c0;">0</span> 
+    <span style="color: #00538b;">result</span>.<span style="color: #8f0075;">add</span>(          
+      <span style="color: #5317ac;">if</span> fizz <span style="color: #8f0075;">and</span> buzz: <span style="color: #2544bb;">"fizzbuzz"</span>
+      <span style="color: #5317ac;">elif</span> fizz: <span style="color: #2544bb;">"fizz"</span>
+      <span style="color: #5317ac;">elif</span> buzz: <span style="color: #2544bb;">"buzz"</span>
+      <span style="color: #5317ac;">else</span>: $i
+    )
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgb215ca6">
+<h2 id="orgb215ca6">Type Migration</h2>
+<aside class="notes">
+<p>
+but a more serious use case is a problem I&rsquo;ve encountered in <b>every</b> job
+</p>
+
+<p>
+diffing types and migrating them as things change
+</p>
+
+<p>
+you were greenfielding your project and needed to model a person in the quickest possible way so you have a first and last name and age &#x2026;
+</p>
+
+<p>
+nothing surprising, completely understandable
+</p>
+
+</aside>
+<ul>
+<li>You start here &#x2026;</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">type</span>
+  <span style="color: #005a5f;">Person</span> = <span style="color: #5317ac;">object</span>
+    firstName: <span style="color: #005a5f;">string</span>
+    lastName: <span style="color: #005a5f;">string</span>
+    age: <span style="color: #005a5f;">int</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgba8f761">
+<h2 id="orgba8f761">Type Migration</h2>
+<aside class="notes">
+<p>
+ok &#x2026; then time passes and you realize you need a middle name and address &#x2026;
+</p>
+
+<p>
+that release was crunch time so you kind of just toss those fields
+</p>
+
+</aside>
+<ul>
+<li>Time passes &#x2026;</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">type</span>
+  <span style="color: #005a5f;">Person</span> = <span style="color: #5317ac;">object</span>
+    ...
+    middleName:<span style="color: #005a5f;">string</span>
+    address:<span style="color: #005a5f;">string</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org419a958">
+<h2 id="org419a958">Type Migration</h2>
+<aside class="notes">
+<p>
+and we arrive at today
+</p>
+
+<p>
+your modeling gets more precise,
+</p>
+
+<p>
+age is now a natural number and address is a more structured type with a street and zip and so on
+</p>
+
+</aside>
+<ul>
+<li>And today &#x2026;</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">type</span>
+  <span style="color: #005a5f;">Address</span> = <span style="color: #5317ac;">object</span>
+    street: <span style="color: #005a5f;">string</span>
+    city: <span style="color: #005a5f;">string</span>
+    ...
+  <span style="color: #005a5f;">Person</span> = <span style="color: #5317ac;">object</span>
+    ...
+    age: <span style="color: #005a5f;">Natural</span>
+    address: <span style="color: #005a5f;">Address</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org8538475">
+<h2 id="org8538475">Type Migration</h2>
+<aside class="notes">
+<p>
+fine &#x2026;
+</p>
+
+<p>
+how do you get from the first version
+</p>
+
+<p>
+to the one that added an address
+</p>
+
+</aside>
+<ul>
+<li>What is the migration story from here &#x2026;</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">type</span>
+  <span style="color: #005a5f;">Person</span> = <span style="color: #5317ac;">object</span>
+    ...
+</pre>
+</div>
+<ul>
+<li>to here &#x2026;</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">type</span>
+  <span style="color: #005a5f;">Person</span> = <span style="color: #5317ac;">object</span>
+    ...
+    middleName:<span style="color: #005a5f;">string</span>
+    address:<span style="color: #005a5f;">string</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgcded035">
+<h2 id="orgcded035">Type Migration</h2>
+<aside class="notes">
+<p>
+to the nicer one today
+</p>
+
+<p>
+with web clients you can force an upgrade but what if you provided a curl download/upload feature
+</p>
+
+<p>
+why because some customer who&rsquo;s paying you a lot of money decided they&rsquo;d rather use Excel to work with your Person data because it&rsquo;s easier arguably they&rsquo;re not wrong &#x2026;
+</p>
+
+<p>
+your customer upgrades and suddenly their csv upload breaks because your type changed
+</p>
+
+<p>
+so what do we do ..
+</p>
+
+</aside>
+<ul>
+<li>to here ..</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-nim"><span style="color: #5317ac;">type</span>
+  <span style="color: #005a5f;">Person</span> = <span style="color: #5317ac;">object</span>
+    ...
+    age: <span style="color: #005a5f;">Natural</span>
+    address: <span style="color: #005a5f;">Address</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org76f9d16">
+<h2 id="org76f9d16">Type Migration</h2>
+<aside class="notes">
+<p>
+so what do we do
+</p>
+
+<p>
+could just accept the boilerplate
+</p>
+
+<p>
+keep copies of all the old types
+</p>
+
+<p>
+and manually write the tedious code that passes through common fields etc. etc.
+</p>
+
+<p>
+i know from experience this approach is unsustainable and false simplicity
+</p>
+
+<p>
+it quickly becomes one of the worst parts of your codebase that no one wants to work on because it&rsquo;s soul sucking and tedious
+</p>
+
+<p>
+so your backlog fills up migration tickets and come release time someone&rsquo;s on the hook for upgrading 10 versions
+</p>
+
+<p>
+in the business we call those a &ldquo;Good First Issues&rdquo;.
+</p>
+
+<p>
+or &#x2026;
+</p>
+
+</aside>
+<ul>
+<li>Embrace The Boilerplate!
+<ul>
+<li>Keep Copies Of The Old Types</li>
+<li>Manually write migrations</li>
+<li>Unsustainable &amp; false simplicity</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org7fc7233">
+<h2 id="org7fc7233">Type Migration</h2>
+<aside class="notes">
+<p>
+you have a language that has how shall we say, an expressive type system
+</p>
+
+<p>
+and you bring in an expert who writes a framework that&rsquo;s 5 layers of abstraction above the term level
+</p>
+
+<p>
+now you&rsquo;ve traded the problem of no one wants to do a migration to no one can
+</p>
+
+<p>
+&#x2026;
+at this point you start having intrusive thoughts like &ldquo;maybe I should have just used a dynamic programming language&rdquo;
+</p>
+
+<p>
+or &#x2026;
+</p>
+
+<p>
+static introspection
+</p>
+
+</aside>
+<ul>
+<li>Expert level solutions for simple problems
+<ul>
+<li>Safe But Complicated</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org3d65823">
+<h2 id="org3d65823">Type Migration</h2>
+<aside class="notes">
+<p>
+&lt;type1
+</p>
+
+<p>
+&lt;diffType I wrote this macro that statically introspects on the types and returns a &ldquo;diff&rdquo; type, the difference the first and second type
+</p>
+
+<p>
+&lt;person1 let&rsquo;s fill in some sample data
+</p>
+
+<p>
+&lt;migrate
+</p>
+
+<p>
+&lt;run-migrate This is another macro that takes the first type and the diff and combines them
+</p>
+
+<p>
+&lt;type2 now we change person again with a structured address
+</p>
+
+<p>
+&lt;difftype1 this time the diff is more interesting because you can&rsquo;t just fill in a default value
+</p>
+
+<p>
+&lt;migrate1 and we run the migration
+</p>
+
+<p>
+&lt;ufcs and remember ufcs lets us chain together migrations
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-org388e012">
+<h2 id="org388e012">Type Migration</h2>
+<aside class="notes">
+<p>
+If you have a great serialization story but no migration you&rsquo;ve only solved half the problem at best!
+</p>
+
+<p>
+Being able to print, take apart and reassemble static structures is absolutely critical and most typed code is more complex than it needs to be because it doesn&rsquo;t have a static introspection story
+</p>
+
+<p>
+And I hope you agree that it&rsquo;s fun
+</p>
+
+<p>
+&#x2026; switching gears I&rsquo;d like to talk about Nim&rsquo;s static resource management
+</p>
+
+</aside>
+<ul>
+<li>Serialization/Deserialization is 1/2 the story</li>
+<li>Static Introspection
+<ul>
+<li>print, take apart, reassemble metadata</li>
+<li>critical for controlling cognitive &amp; codebase complexity</li>
+<li>it&rsquo;s fun :)</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org3670b31">
+<h2 id="org3670b31">Static Resource Management</h2>
+<aside class="notes">
+<p>
+&lt;type an object with strings
+</p>
+
+<p>
+&lt;make a function to create array of strings, this no allocation
+</p>
+
+<p>
+&lt;print make and print the array
+</p>
+
+<p>
+&lt;main we read a number from the user and kick it off
+</p>
+
+<p>
+valgrind ./simpledestruction 10
+</p>
+
+<p>
+&lt;destroy let&rsquo;s see when destruction is happening
+</p>
+
+<p>
+what if we returned the O from print
+</p>
+
+<p>
+echo o.ss
+</p>
+
+</aside>
+<ul>
+<li>Array&rsquo;s of Strings Redux</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgd8146b3">
+<h2 id="orgd8146b3">Static Resource Management</h2>
+<aside class="notes">
+<p>
+So Nim statically tracks the flow of resources and injects destructors after last use
+</p>
+
+<p>
+It&rsquo;s like RAII but completely unobtrusive
+</p>
+
+<p>
+You just forget it exists most of the time and you get a memory clean app
+</p>
+
+</aside>
+<ul>
+<li>Nim statically &amp; injects destructors after last use.</li>
+<li>Like RAII but completely unobtrusive</li>
+<li>Just forget it exists!</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org6a79a93">
+<h2 id="org6a79a93">Static Resource Management</h2>
+<aside class="notes">
+<p>
+a thing that most people miss about Nim is that it has rudimentary linear types!
+</p>
+
+<p>
+and it highlights some key philosophies in Nim&rsquo;s design
+</p>
+
+<p>
+so back to our example
+</p>
+
+<p>
+&lt;sink now our print takes an o that is a sink!
+</p>
+
+<p>
+now we run it
+</p>
+
+<p>
+whoa there&rsquo;s two destroys
+</p>
+
+<p>
+why is there no error message are linear types broken?
+</p>
+
+<p>
+nim supports this command line argument called expandarc
+</p>
+
+<p>
+it&rsquo;s copying!
+</p>
+
+</aside>
+<ul>
+<li>Nim has (basic) linear types!</li>
+<li>Also illustrate some key philosophies in design</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgc08a44b">
+<h2 id="orgc08a44b">Static Resource Management</h2>
+<aside class="notes">
+<p>
+first philosophy: get out of the user&rsquo;s way!
+</p>
+
+<p>
+when there&rsquo;s a choice between copying and bugging the user with a error Nim copies!
+</p>
+
+<p>
+second philosophy: show don&rsquo;t tell!
+</p>
+
+<p>
+expandArc shows us the intermediate representation and we were able to see the problem directly
+</p>
+
+<p>
+you can spot bugs, people use this to report bugs in the compiler!
+</p>
+
+</aside>
+<ul>
+<li>Get out of the user&rsquo;s way</li>
+<li>Show, don&rsquo;t tell
+<ul>
+<li>More powerful than error messages!</li>
+<li>Can spot bugs!</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org78c16f0">
+<h2 id="org78c16f0">Static Resource Management</h2>
+<aside class="notes">
+<p>
+&lt;copy so we make copying an error
+</p>
+
+<p>
+and now the compiler throws an error about the read
+</p>
+
+</aside>
+<ul>
+<li>So we have to disable copying</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org2786bdb">
+<h2 id="org2786bdb">Static Resource Management</h2>
+<ul>
+<li>It works well
+<ul>
+<li>The standard library and most packages have moved to it</li>
+
+</ul></li>
+<li>Relax and do the easy thing
+<ul>
+<li>Profile &amp; optimize when necessary</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org345e294">
+<h2 id="org345e294">C++ Interop</h2>
+<aside class="notes">
+<p>
+&lt;type here we&rsquo;re binding the Nim type StdVector[T]
+</p>
+
+<p>
+the &rsquo;0 means take that generic argument T and splice it in so if stdvector was parameterize with uniqueptr then it would generate stdvector&lt;stduniqueptr etc
+</p>
+
+<p>
+same with Unique Ptr we need this because unique pointer destruct the thing they point to when they go out of scope
+</p>
+
+<p>
+and Std String
+</p>
+
+<p>
+&lt;vops then we bind the vector constructor the append function and the index operator
+</p>
+
+<p>
+&lt;uops and a couple of unique ptr functions
+</p>
+
+<p>
+&lt;sops and the std string constructor and getter
+</p>
+
+<p>
+&lt;make then we make the vector similar to the first example, the C++ STL takes care of allocating memory
+</p>
+
+<p>
+&lt;let make ten strings in the vector
+</p>
+
+<p>
+&lt;for and run through and print them
+</p>
+
+<p>
+No need for deallocation the std::vector and std::unique<sub>ptr</sub> handle that for us
+</p>
+
+<p>
+&#x2026; and that&rsquo;s it
+</p>
+
+</aside>
+<ul>
+<li>Show how to reuse the Standard Template Library</li>
+<li>Add a bunch of <code>std::string</code> to an <code>std::vector</code></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orga69a042">
+<h2 id="orga69a042">C++ Interop</h2>
+<aside class="notes">
+<p>
+this is just a fun example of interop that I wanted to show you
+</p>
+
+<p>
+btw inside this emit pragma you can generate arbitrary c or c++ code
+</p>
+
+<p>
+this set of recursive templates was one of the early examples that C++ templates are Turing complete and the world has never been the same
+</p>
+
+<p>
+so this is a set of recursive templates that at compile time inline a bunch of multiplications which are golfed down to a constant at compile time
+</p>
+
+<p>
+and this is how you bind to it in Nim
+</p>
+
+<p>
+it&rsquo;s like std::vector but we&rsquo;re passing in a static int that is a type level int, you can pass in a literal number as a type
+</p>
+
+<p>
+and when we wrap value we&rsquo;re using this typedesc construct which carries that type level int, it&rsquo;s a metatype sort of like a kind in Haskell
+</p>
+
+<p>
+so anyway, just a little party trick
+</p>
+
+</aside>
+<ul>
+<li>Factorial example ( if time permits )</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgaa8b89f">
+<h2 id="orgaa8b89f">C++ Interop</h2>
+<aside class="notes">
+<p>
+When it&rsquo;s this easy to reuse C++ APIs trying out Nim is much less of a gamble
+</p>
+
+</aside>
+<ul>
+<li>Any C++ library is now accessible
+<ul>
+<li>The ecosystem just got waaay bigger!</li>
+
+</ul></li>
+<li>Trying out Nim is low risk!</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org44717ba">
+<h2 id="org44717ba">Wrap Up</h2>
+<aside class="notes">
+<p>
+I haven&rsquo;t really demo&rsquo;ed it but fast feedback and the speed of the compiler is a feature and fundamentally makes a difference to how you approach your programming
+</p>
+
+<p>
+Static introspection gives you a level of dynamism and flexibility that you get in few other typed languages and when you need it nothing else will do.
+</p>
+
+<p>
+you get the benefits of static memory management but it mostly gets out of your way and you can simply write code without worrying, if you need to control it&rsquo;s always there
+</p>
+
+<p>
+And the C++ interop makes Nim a viable alternative in places where almost any other language would be a non-starter
+</p>
+
+</aside>
+<ul>
+<li>Fast Compiler!</li>
+<li>Static Introspection</li>
+<li>Static Memory Management With Minimal Hassle</li>
+<li>C++ interop</li>
+<li>Thanks for coming!</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="/home/deech/doom-emacs/.local/straight/build-28.0.50/revealjs/dist/reveal.js"></script>
+<script src="/home/deech/doom-emacs/.local/straight/build-28.0.50/revealjs/plugin/markdown/markdown.js"></script>
+<script src="/home/deech/doom-emacs/.local/straight/build-28.0.50/revealjs/plugin/notes/notes.js"></script>
+<script src="/home/deech/doom-emacs/.local/straight/build-28.0.50/revealjs/plugin/search/search.js"></script>
+<script src="/home/deech/doom-emacs/.local/straight/build-28.0.50/revealjs/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'none',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>
